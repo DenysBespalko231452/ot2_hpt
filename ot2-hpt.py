@@ -10,15 +10,15 @@ import tensorboard
 
 os.environ['WANDB_API_KEY'] = 'af1a6039f20199fa6afe8c2022dde72b137ba944'
 
-task = Task.init(project_name="Mentor Group E/Group DMRM", task_name="ppo-hpt_name")
+task = Task.init(project_name="Mentor Group E/Group DMRM", task_name="ppo-hpt_Denys")
 
 # Define sweep config
 sweep_config = {
     "method": "bayes",
-    "name": "sweep_name",
+    "name": "sweep_Denys",
     "metric": {"goal": "minimize", "name": "rollout/ep_len_mean"},
     "parameters": {
-        "learning_rate": {"values": [0.0003, 0.0001, 0.00005, 0.0005, 0.00008]},
+        "learning_rate": {"values": [3e-4, 1e-4, 5e-4, 1e-3, 8e-5]},
         # "n_steps": {"distribution": "int_uniform", "min": 128, "max": 512},
         # "batch_size": {"distribution": "int_uniform", "min": 32, "max": 256},
         # "gamma": {"distribution": "uniform", "min": 0.9, "max": 0.999},
@@ -49,10 +49,10 @@ def main(config=None):
     env = OT2Env()
     env.reset(seed=42)
 
-    model = PPO("MlpPolicy", env, learning_rate=learning_rate, verbose=1, tensorboard_log="./logs_final_hpt")
+    model = PPO("MlpPolicy", env, learning_rate=learning_rate, verbose=1, device="cuda", tensorboard_log="./logs_final_hpt")
 
-    model.learn(total_timesteps=2_000_000, reset_num_timesteps=False)
+    model.learn(total_timesteps=2_500_000, reset_num_timesteps=False)
 
     run.finish()
 
-wandb.agent(sweep_id, main)
+wandb.agent(sweep_id, main, count=5)
